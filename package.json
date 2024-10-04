@@ -4,10 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "env-cmd -e env vite --mode development",
-    "build": "tsc -b && vite build",
+ "dev": "env-cmd -e env vite --mode development",
+    "build": "tsc --noEmit --project tsconfig.build.json && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@tanstack/react-table": "^8.20.5",
@@ -15,6 +16,7 @@
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
     "dart-sass": "^1.25.0",
+    "install": "^0.13.0",
     "postcss": "^8.4.47",
     "react": "^18.3.1",
     "react-country-flag": "^3.1.0",
@@ -36,6 +38,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
+    "gh-pages": "^6.1.1",
     "globals": "^15.9.0",
     "prettier": "^3.3.3",
     "sass": "^1.79.4",
