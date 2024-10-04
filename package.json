@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "env-cmd -e env vite --mode development",
+    "dev": "vite --mode development",
     "build": "tsc --noEmit --project tsconfig.build.json && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
