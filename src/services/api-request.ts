@@ -182,7 +182,6 @@ export default function initApiRequest<TData>(
   // API URL
   const url = import.meta.env.VITE_API_ENDPOINT;
 
-
  const headers = getRequestHeaders(apiDetails, initialAuthToken, extraData);
   const transformedRequestData = transformRequestData(apiDetails, requestData);
 
