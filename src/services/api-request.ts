@@ -61,33 +61,50 @@ const getRequestHeaders = (
   return headers;
 };
 
-
-function getFormData(requestData: { [key: string]: RequestDataType }) {
+function getFormData(requestData: { [key: string]: RequestData }) {
   const formData = new FormData();
-  for (const data in requestData) {
-    if (requestData[data] instanceof Array) {
-      requestData[data].forEach((dataEl: RequestDataType, index: number) => {
-        if (dataEl instanceof Object && !(dataEl instanceof File)) {
-          Object.keys(dataEl).forEach((elKey) =>
-            formData.append(`${data}[${index}].${elKey}`, dataEl[elKey])
-          );
+
+  for (const key in requestData) {
+    const value = requestData[key];
+
+    if (Array.isArray(value)) {
+      value.forEach((dataEl: RequestData, index: number) => {
+        if (typeof dataEl === 'object' && dataEl !== null && !(dataEl instanceof File)) {
+          Object.keys(dataEl).forEach((elKey) => {
+            // Type assertion to ensure dataEl is treated as an object
+            const elValue = (dataEl as { [key: string]: RequestData })[elKey];
+
+            // Ensure elValue is a valid type
+            if (typeof elValue === 'string' || typeof elValue === 'number') {
+              formData.append(`${key}[${index}].${elKey}`, elValue.toString());
+            } else if (elValue instanceof File) {
+              formData.append(`${key}[${index}].${elKey}`, elValue);
+            }
+          });
         } else if (dataEl instanceof File) {
-          // formData.append(data, dataEl);
-          formData.append(`${data}[${index}]`, dataEl);
+          formData.append(`${key}[${index}]`, dataEl);
         } else if (typeof dataEl === 'number' || typeof dataEl === 'string') {
-          formData.append(`${data}[${index}]`, dataEl.toString());
+          formData.append(`${key}[${index}]`, dataEl.toString());
         }
       });
-    } else if (requestData[data] instanceof Object && !(requestData[data] instanceof File)) {
-      Object.entries(requestData[data]).forEach(([key, value]: [string, RequestDataType]) =>
-        formData.append(`${data}.${key}`, value)
-      );
+    } else if (typeof value === 'object' && value !== null && !(value instanceof File)) {
+      Object.entries(value).forEach(([innerKey, innerValue]) => {
+        // Type assertion to ensure innerValue is treated as RequestData
+        if (typeof innerValue === 'string' || typeof innerValue === 'number') {
+          formData.append(`${key}.${innerKey}`, innerValue.toString());
+        } else if (innerValue instanceof File) {
+          formData.append(`${key}.${innerKey}`, innerValue);
+        }
+      });
     } else {
-      formData.append(data, requestData[data]);
+      formData.append(key, value as string); // Assumed string or primitive
     }
   }
+
   return formData;
 }
+
+
 
 function getQueryString(data: { [key: string]: string }) {
   return new URLSearchParams(data);
@@ -119,6 +136,7 @@ const manageErrorResponse = (error: any, apiDetails: APIDetailType) => {
 
   errorResponse.config = error.config; // Request Params Configs
   errorResponse.isAxiosError = error.isAxiosError; //If Axios Error
+
   return errorResponse;
 };
 
@@ -130,15 +148,15 @@ const transformRequestData = (apiDetails: APIDetailType, requestData: RequestDat
   switch (apiDetails.requestBodyType) {
     case 'NO-AUTH':
       transformedRequestData.auth = basicAuth;
-      transformedRequestData.data = getFormData(requestData);
+      transformedRequestData.data = getFormData(requestData as any);
       if (transformedRequestData.data instanceof FormData)
         transformedRequestData.data.append(getGrantType.key, getGrantType.value);
       break;
     case 'FORM-DATA':
-      transformedRequestData.data = getFormData(requestData);
+      transformedRequestData.data = getFormData(requestData as any);
       break;
     case 'QUERY-STRING':
-      transformedRequestData.data = getQueryString(requestData);
+      transformedRequestData.data = getQueryString(requestData as any);
       break;
     default:
       transformedRequestData.data = requestData;
