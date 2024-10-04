@@ -161,7 +161,6 @@ const selectStyles: Partial<any> = {
   valueContainer: (provided: CSSProperties) => ({
     ...provided,
     minHeight: 'auto',
-    overflowX: 'auto',
     padding: '0',
   }),
   container: (provided: CSSProperties) => {

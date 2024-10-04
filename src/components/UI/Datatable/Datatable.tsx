@@ -199,8 +199,8 @@ const Datatable = <T extends object>(props: ReactTableProps<T>) => {
       ) : (
         <>
           <div className={`bg-gray-100  pt-3 pb-3 ${wrapperClassName}`}>
-            <div className="grid grid-cols-12 grid-flow-col gap-4">
-              <div className="col-span-2">
+            <div className="grid grid-cols-12 gap-4">
+              <div className="col-span-6 sm:col-span-3 xl:col-span-2">
                 <SelectField
                   options={statusOptions}
                   showLabelInInput
@@ -208,10 +208,10 @@ const Datatable = <T extends object>(props: ReactTableProps<T>) => {
                   placeholder={'Status : All'}
                 />
               </div>
-              <div className="col-span-3">
+              <div className="col-span-6 sm:col-span-4 xl:col-span-3">
                 <SearchFilter search={search} setSearch={setSearch} />
               </div>
-              <div className="col-span-2 col-start-11">
+              <div className="col-span-6 sm:col-span-4 sm:col-start-9 xl:col-span-2 xl:col-start-11">
                 <SelectField options={[]} placeholder="Filter by date range" />
               </div>
             </div>

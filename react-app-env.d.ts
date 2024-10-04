@@ -1,6 +1,7 @@
 /// <reference types="react-scripts" />
 /// <reference types="@welldone-software/why-did-you-render" />
 
+import { To } from 'react-router-dom';
 // for api params
 
 interface OptionValues {
@@ -43,7 +44,7 @@ interface PaginatedParams {
     option?: string;
     isRequisition?: boolean;
   };
-  escape_pg?: bool;
+  escape_pg?: boolean;
   include?: string;
   search?: string;
 }
@@ -52,6 +53,9 @@ interface PaginatedParams {
  * Primitive types
  */
 type Primitive = string | boolean | number;
+interface State {
+  [key: string]: any; // Adjust based on your application's state shape
+}
 
 // type define for useLocation
 interface ILocation<S extends State = State> {
@@ -67,11 +71,9 @@ interface INavigate {
   (to: To, options?: { replace?: boolean; state?: any }): void;
   (delta: number): void;
 }
-
+type RequestData = Primitive | File | Array<Primitive> | { [key: string]: any };
 type RequestDataType = Primitive &
-  (File | Array | { [key: string]: RequestData });
-type RequestDataType = Primitive &
-  (File | Array | { [key: string]: RequestData });
+  (File | Array<Primitive> | { [key: string]: RequestData });
 /**
  * Default Redux Action
  */
