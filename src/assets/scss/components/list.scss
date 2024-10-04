@@ -1,0 +1,12 @@
+.list {
+  list-style: none;
+  li {
+    &:not(:last-child) {
+      margin-bottom: 0.5rem;
+      @media (max-width: 700px) {
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 1rem;
+      }
+    }
+  }
+}

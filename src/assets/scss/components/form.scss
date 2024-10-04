@@ -1,0 +1,38 @@
+.form {
+  &-element {
+    @apply px-3 py-2 rounded-md text-sm font-normal text-gray-400;
+  }
+  &-icon {
+    @apply text-gray-500 absolute top-1/2 -translate-y-1/2 bg-white;
+  }
+}
+
+input,
+select {
+  @extend .form-element;
+  @apply block w-full;
+}
+
+input[type='date'] {
+  &::-webkit-calendar-picker-indicator {
+    display: none;
+  }
+  &::-webkit-calendar-picker-indicator {
+    display: none;
+  }
+  &::placeholder {
+    color: transparent;
+  }
+}
+
+.pagination {
+  &-button {
+    @apply text-sm px-2.5 py-1 rounded-md min-h-[28px] text-[#8B909A] bg-[#F1F2F6];
+    &:disabled {
+      opacity: 0.8;
+    }
+    &.active {
+      @apply bg-blue text-white;
+    }
+  }
+}

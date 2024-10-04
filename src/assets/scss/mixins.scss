@@ -1,0 +1,25 @@
+@mixin progressbar($width) {
+  animation: progressBarIncrease 3s ease-in-out;
+  animation-fill-mode: both;
+  @keyframes progressBarIncrease {
+    0% {
+      width: 0;
+    }
+    100% {
+      width: $width;
+    }
+  }
+}
+
+@mixin progressbarDecrease($width) {
+  animation: progressBarDecrease 3s ease-in-out;
+  animation-fill-mode: both;
+  @keyframes progressBarDecrease {
+    0% {
+      width: 100%;
+    }
+    100% {
+      width: $width;
+    }
+  }
+}

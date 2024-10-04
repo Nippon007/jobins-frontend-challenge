@@ -1,0 +1,10 @@
+.textbox {
+  &-01 {
+    h5 {
+      @apply text-[#23272E] font-semibold text-lg whitespace-nowrap;
+    }
+    h6 {
+      @apply text-sm font-medium text-[#8B909A];
+    }
+  }
+}

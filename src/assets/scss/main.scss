@@ -1,0 +1,42 @@
+@import './tailwind.css';
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+  font-family: 'Public Sans', sans-serif;
+}
+
+#root {
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  @media (max-width: 1400px) {
+    height: auto;
+    overflow: auto;
+  }
+}
+
+$sidebar-width: 260px;
+$sidebar-width-collapsed: 65px;
+
+.section {
+  &-main {
+    @apply px-4 pb-5  bg-gray-100 grow flex flex-col h-full w-full;
+    padding-left: calc($sidebar-width + 16px);
+    transition: all 0.5s ease-in-out;
+
+    &.collapsed {
+      padding-left: calc($sidebar-width-collapsed + 16px);
+    }
+
+    @media (max-width: 700px) {
+      padding-left: calc(65px + 16px);
+    }
+  }
+}
+
+@import './mixins.scss';
+@import './components/sidebar.scss';
+@import './components/list.scss';
+@import './components/text.scss';
+@import './components/form.scss';
+@import './components/progressbar.scss';

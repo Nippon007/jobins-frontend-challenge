@@ -1,0 +1,11 @@
+.progressbar {
+  @apply h-1.5 w-full bg-[#E9E7FD] rounded-lg;
+  .progress {
+    @apply bg-blue h-1.5 rounded-full;
+    @include progressbar(100);
+
+    &.decrease {
+      @include progressbarDecrease(100);
+    }
+  }
+}
