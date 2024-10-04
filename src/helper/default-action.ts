@@ -19,18 +19,14 @@ enum STATUS_ENUM {
   FINAL_REJECTION = 8,
 }
 
-/**
- * Request details for XMLHTTP request
- */
-
 export const modulePrefix = {
   masterData: 'master_data',
 };
 
 export interface ResponseError {
   message: string;
-  data: any;
-  status: boolean;
+  data?: any;
+  status: boolean | number; // Change to accept both types
   response?: AxiosResponse;
   config?: AxiosRequestConfig;
   noconnection?: boolean;
@@ -44,6 +40,7 @@ export interface BasicResponse {
   status: number;
   success: boolean;
 }
+
 export interface StatusType {
   id: STATUS_ENUM;
   status: string;
@@ -65,43 +62,24 @@ function sanitizeController(
       }
     : apiDetail;
 }
+
 export interface APIRequestDetail {
-  /**Request data for the API */
   requestData?: RequestDataType;
-  /** REST API Method
-   *
-   * This will override requestMethod provided by apiDetails
-   */
   requestMethod?: Method;
-  /**Path variables present in controller
-   *
-   * Provided pathVariables -> {id: 1, type: 'test'}
-   * Converts controller-url/{id}/{type} -> controller-url/1/test
-   */
   pathVariables?: { [key: string]: Primitive };
-  /**Request params
-   *
-   * Provided params -> {id: 1, type: 'test'}
-   * Converts controller-url -> controller-url?id=1&type=test
-   */
   params?: RequestParam;
-  /**Axios cancel token source */
   cancelSource?: CancelTokenSource;
-  /**Disable Success Toast */
   disableSuccessToast?: boolean;
-  /**Disable Failure Toast */
   disableFailureToast?: boolean;
   enableSuccessToast?: boolean;
   initialAuthToken?: string;
 }
 
-export interface CustomResponse<TData = unknown> extends AxiosResponse {
+export interface CustomResponse<TData = unknown>
+  extends AxiosResponse<TData, any> {
   message: string;
-  data: TData | null;
-  // data: TData | undefined;
   status: number;
   noconnection: boolean;
-  config: AxiosRequestConfig;
   isAxiosError: boolean;
 }
 
@@ -139,16 +117,8 @@ export interface PaginatedParams {
 
 export type APIResponseDetail<TData = unknown> = Promise<CustomResponse<TData>>;
 
-let timeoutLanguageCount = 0;
-let noServerConnectionLanguageCount = 0;
-let noConnectionLanguageCount = 0;
 const axiosCancelSource = Axios.CancelToken.source();
 
-/**
- * Manages API call and updates reducer with success or failure
- * @param apiDetails redux action and api config
- * @param apiRequestDetails request details for XMLHTTP request
- */
 export default async function performApiAction<TData = unknown>(
   apiDetails: APIDetailType,
   apiRequestDetails: APIRequestDetail = {}
@@ -160,17 +130,16 @@ export default async function performApiAction<TData = unknown>(
     params,
     cancelSource,
     disableSuccessToast = false,
-    disableFailureToast,
     enableSuccessToast = false,
     initialAuthToken,
   } = apiRequestDetails;
 
-
   const sanitizedApiDetails = sanitizeController(apiDetails, pathVariables);
 
-  let responseData: any;
+  let responseData: CustomResponse<TData> | undefined;
+
   try {
-    responseData = await initApiRequest<TData>(
+    const axiosResponse: AxiosResponse<TData> = await initApiRequest<TData>(
       sanitizedApiDetails,
       requestData,
       requestMethod || sanitizedApiDetails.requestMethod || 'GET',
@@ -179,83 +148,56 @@ export default async function performApiAction<TData = unknown>(
       initialAuthToken
     );
 
-    if (
-      (responseData as unknown as ResponseError).isAxiosError &&
-      (responseData as unknown as ResponseError).response?.status === 401
-    ) {
-    }
+    // Construct your CustomResponse from the AxiosResponse
+    responseData = {
+      ...axiosResponse,
+      message: 'Success', // Customize this as needed
+      noconnection: false, // Or set this based on your logic
+      isAxiosError: false, // Set based on your error handling logic
+    };
 
-    if (!responseData) {
-      throw responseData;
-    }
     if (enableSuccessToast) {
-      // SuccessToast(responseData.data?.message);
+      // Show success toast
     }
 
-    if (disableSuccessToast) {
-      // No work done
-    } else {
-      if (![requestMethod, sanitizedApiDetails.requestMethod].includes('GET')) {
-        // SuccessToast(responseData.data?.message);
+    if (!disableSuccessToast && !['GET'].includes(requestMethod || '')) {
+      // Show success toast
+    }
+  } catch (error) {
+    let errorResponseData: ResponseError = {
+      message: 'An error occurred',
+      status: false,
+      noconnection: false,
+      isAxiosError: false,
+      data: {},
+    };
+
+    if (Axios.isAxiosError(error)) {
+      errorResponseData = {
+        ...errorResponseData,
+        ...error.response,
+        isAxiosError: true,
+        message: error.message,
+      };
+
+      if (error.response?.status === 401) {
+        // Handle unauthorized access
       }
-    }
-  } catch (customThrownError) {
-    responseData = customThrownError;
-    let errorResponseData: { [key: string]: RequestDataType } = {};
-
-    if (responseData instanceof Object) {
-      errorResponseData = { ...responseData };
+    } else if (error instanceof Error) {
+      errorResponseData.message = error.message;
     }
 
-    if (errorResponseData.status === 413) {
-      // FailToast('कृपया १२ MB भन्दा कम साइजको फाइलहरु अपलोड गर्नुहोला ।');
+    // Handle specific error codes
+    if (errorResponseData.response?.status === 413) {
+      // Handle payload too large
     }
 
-    // if (disableFailureToast) {
-    //   // No work done
-    // } else {
-    //   errorResponseData?.data?.message && FailToast(errorResponseData?.data?.message + 'hello');
-    // }
-
-    // Axios Timeout
-    if (errorResponseData.config?.code === 'ECONNABORTED') {
-      if (!timeoutLanguageCount) {
-        timeoutLanguageCount++;
-        // FailToast(requestTimeoutLanguage());
-      }
-    }
-    if (
-      (responseData as ResponseError).data &&
-      (responseData as ResponseError).isAxiosError
-    ) {
-      if (responseData.data?.message) {
-        // FailToast(responseData.data?.message);
-      } else if (errorResponseData?.message) {
-        // FailToast(
-        //   'Server is taking too long to respond, this can be caused by either poor connectivity or an error with our servers. Please try again in a while!'
-        // );
-      }
-    }
-
-    // No Connection
+    // Handle connection issues
     if (errorResponseData.noconnection) {
-      // No Server Connection
-      if (errorResponseData.message === 'Server could not be reached') {
-        if (!noServerConnectionLanguageCount) {
-          noServerConnectionLanguageCount++;
-          // FailToast(noConnectionLanguage());
-        }
-      }
-      // No Connection
-      else if (errorResponseData.config.code !== 'ECONNABORTED') {
-        if (!noConnectionLanguageCount) {
-          noConnectionLanguageCount++;
-          // FailToast(noConnectionLanguage());
-        }
-      }
+      // Handle no connection
     }
 
-    throw new Error(errorResponseData?.message);
+    throw new Error(errorResponseData.message);
   }
 
   return responseData as CustomResponse<TData>;

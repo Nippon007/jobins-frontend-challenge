@@ -95,7 +95,7 @@ interface ImportMetaEnv {
     payload?: TPayload;
   }
   interface DefaultState<TData = RequestDataType> {
-    data: TData;
+    data: TData | null | undefined;
     message: string;
     isFetching: boolean;
     isFailed: boolean;
