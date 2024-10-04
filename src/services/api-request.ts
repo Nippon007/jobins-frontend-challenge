@@ -119,7 +119,6 @@ const manageErrorResponse = (error: any, apiDetails: APIDetailType) => {
 
   errorResponse.config = error.config; // Request Params Configs
   errorResponse.isAxiosError = error.isAxiosError; //If Axios Error
-  console.log(errorResponse, 'rejlajfldajslfjlasdf');
   return errorResponse;
 };
 

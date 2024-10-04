@@ -6,7 +6,6 @@ import UserTableSkeleton from './UserTableSkeleton';
 
 const HomeTab = () => {
   const { data: userData, isLoading: dataLoading, isError } = useUserList();
-  console.log(userData, 'errr');
 
   const columnsDefs = useMemo(() => {
     return [
@@ -54,7 +53,6 @@ const HomeTab = () => {
             <span
               className="text-blue cursor-pointer"
               onClick={() => {
-                console.log('her');
               }}
             >
               View Details

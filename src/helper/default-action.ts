@@ -165,11 +165,8 @@ export default async function performApiAction<TData = unknown>(
     initialAuthToken,
   } = apiRequestDetails;
 
-  console.log(disableFailureToast);
 
-  // Check for path variables in controllername
   const sanitizedApiDetails = sanitizeController(apiDetails, pathVariables);
-  console.log('Sanitized11', sanitizedApiDetails);
 
   let responseData: any;
   try {
