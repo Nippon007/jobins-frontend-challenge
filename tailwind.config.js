@@ -17,6 +17,7 @@ export default {
         lg: '950px',
         md: '840px',
         sm: '700px',
+        xs:"420px"
 
         // '3xl': '1600px',
       },

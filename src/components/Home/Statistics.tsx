@@ -43,7 +43,7 @@ const Statistics = () => {
         <div className="col-span-12 md:col-span-7 lg:col-span-6 xl:col-span-4 ">
           <Card className="flex h-full items-center">
             <img src={Business} alt="" />
-            <div className="block sm:flex justify-between grow md:block border-l pl-8 ml-8 ">
+            <div className="block sm:flex justify-between grow md:block border-l xs:pl-8 xs:ml-8 pl-3 ml-3 ">
               <div className="textbox-01">
                 <h5>Total Sales & Cost</h5>
                 <h6>Last 7 days</h6>

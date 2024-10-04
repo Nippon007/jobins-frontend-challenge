@@ -13,7 +13,7 @@ const TabComponent = ({ tabs, className }: ITab) => {
 
   return (
     <>
-      <div className="flex w-full bg-white px-6 rounded-b-lg">
+      <div className="flex w-full bg-white sm:px-6 rounded-b-lg">
         {tabs.map((tab, index) => (
           <button
             key={index}
